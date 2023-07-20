@@ -112,7 +112,7 @@ npm install
 
 Please check the `package.json` for the supported and tested versions of node and npm.
 
-[Register an application on GitHub](https://github.com/settings/applications/new).
+[Register an OAuth application on GitHub](https://github.com/settings/applications/new).
 The callback URL needs to be of the form of `<PROTOCOL>://<HOST>:<PORT>/auth/github/callback`.
 
 You can use ngrok to get a publicly accessible URL which redirects to your localhost:5000 by executing the following command:
@@ -141,6 +141,18 @@ docker run --detach --publish 27017:27017 mongo
 
 With that you need to adjust the `MONGODB` environment variable in the `.env` file to `mongodb://localhost:27017/cla_assistant`.
 
+**Setup GitHub App**
+
+- [Register an GitHub App](https://github.com/settings/apps/new) and add repository permissions for Pull Requests. 
+- Copy the App Name, App ID, Client ID and Client Secret into the `.env`.
+- Generate a new private key, download it and add the contents to the `.env` file (`GITHUB_APP_PRIVATE_KEY`)
+
+> **Note**: If your private key isn't recognized properly, you can try to fill the contents from a file:
+>
+> ```bash
+> export GITHUB_APP_PRIVATE_KEY="$(cat key.pem)"
+> ```
+
 ### Supported environment variables
 
 
@@ -153,6 +165,11 @@ The following are the environment variables you have to configure to run a priva
 - `GITHUB_CLIENT`: From your registered application in GitHub.
 - `GITHUB_SECRET`: From your registered application in GitHub.
 - `GITHUB_TOKEN`: Use GitHub token of CLA assistant's user for API calls of not authenticated users. It can be generated here https://github.com/settings/tokens/new. The Only scope required is `public_repo`.
+- `GITHUB_APP_NAME`: The name of your registered GitHub App.
+- `GITHUB_APP_PRIVATE_KEY`: The contents of the private key from your registered GitHub App.
+- `GITHUB_APP_ID`: The ID of your registered GitHub App.
+- `GITHUB_APP_CLIENT`: The Client ID of your registered GitHub App.
+- `GITHUB_APP_SECRET`: The Client Secret of your registered GitHub App.
 - `GITHUB_ADMIN_USERS`: (optional, comma-separated) If set, will only allow the specified GitHub users to administer this instance of the app.
 - `MONGODB`: This has to be in form of a mongodb url, e.g. `mongodb://<user>:<password>@<host>:<port>/<dbname>`.
 - `SLACK_URL`: Optional. You can use it in case you would like to get log-notifications posted in your slack chat.
