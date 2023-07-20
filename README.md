@@ -27,10 +27,12 @@ Repository owners can review a list of users who signed the CLA for each version
 We also developed a [lite version](https://github.com/cla-assistant/github-action) of CLA Assistant using GitHub Actions which is in Alpha. You can checkout it out [here](https://github.com/cla-assistant/github-action).
 
 ## Try
+
 CLA assistant is provided by [SAP](https://sap.com) as a free hosted offering under [cla-assistant.io](https://cla-assistant.io).
 Please open a GitHub issue if you have feedback.
 
 ## Request more information from the CLA signer
+
 If you need to collect detailed information about your contributors you can add so called "custom fields" to your CLA.
 This can be done by providing CLA assistant with some metadata that describes the data you are going to collect.
 CLA assistant will generate a form based on this metadata and contributors will be requested to fill out the form before they sign your CLA.
@@ -81,23 +83,30 @@ You can also define which of required information can be taken from user's GitHu
 The possible values for the "githubKey"-property can be found in the [GitHub-API description](https://developer.github.com/v3/users/#get-a-single-user).
 
 ## FAQ
+
 #### Where is the list of signees stored?
+
 Since 27.08.2021 all data is stored in a Cosmos DB (MongoDB compatible) hosted on Microsoft Azure in Europe ([#740](https://github.com/cla-assistant/cla-assistant/issues/740)).
 Before that all the data was stored in a MongoDB hosted by [mLab](https://mlab.com/).
 
 #### Where can I see the list of signees? Is there a way to import/export the signee data?
+
 You can see the list of signees on the user interface. There is also a possibility for you to export the list as a .csv file.
 
 #### What should my Contributor License Agreement say?
+
 We're no lawyers, but we can suggest using https://contributoragreements.org/ for a fill-in-the-blank approach to creating a CLA tailored to your needs.
 
 #### Who can I contact for help?
+
 In case of problems or any further questions, please check our [general trouble shooting issue](https://github.com/cla-assistant/cla-assistant/issues/567) or [open an issue](https://github.com/cla-assistant/cla-assistant/issues/new). We always appreciate helpful tips and support for the project.
 
 #### How can I contribute?
+
 You want to contribute to CLA Assistant? Welcome! Please read [here](https://github.com/cla-assistant/cla-assistant/blob/main/CONTRIBUTING.md).
 
 #### Can I allow bot user contributions?
+
 Since there's no way for bot users (such as Dependabot or Greenkeeper) to sign a CLA, you may want to allow their contributions without it. You can do so by importing their names (in this case `dependabot[bot]` and `greenkeeper[bot]`) in the CLA assistant dashboard.
 
 ## Setup your own instance of CLA assistant
@@ -115,12 +124,13 @@ Please check the `package.json` for the supported and tested versions of node an
 [Register an OAuth application on GitHub](https://github.com/settings/applications/new).
 The callback URL needs to be of the form of `<PROTOCOL>://<HOST>:<PORT>/auth/github/callback`.
 
-You can use ngrok to get a publicly accessible URL which redirects to your localhost:5000 by executing the following command:
-```sh
-ngrok http 5000
-```
-
-If you use ngrok, you need to update the HOST variable in your .env and set PROTOCOL to "https".
+> **Note**: You can use [ngrok](https://ngrok.com/) to get a publicly accessible URL which redirects to your `localhost:5000` by executing the following command:
+>
+> ```sh
+> ngrok http 5000
+> ```
+> 
+> If you use ngrok, you need to update the `HOST` variable in your `.env` file and set `PROTOCOL` to "https".
 
 
 Copy the sample configuration file `.env.example` file to `.env`.
@@ -133,13 +143,13 @@ You require a MongoDB or compatible database as a backend such as:
 -  [Azure Cosmos DB](https://cosmos.azure.com)
 -  [FerretDB](https://www.ferretdb.io) and [their blog post about using it with CLA Assistant](https://blog.ferretdb.io/using-cla-assistant-with-ferretdb/)
 
-For development purposes you can run MongoDB in a docker container easily:
-
-```sh
-docker run --detach --publish 27017:27017 mongo
-```
-
-With that you need to adjust the `MONGODB` environment variable in the `.env` file to `mongodb://localhost:27017/cla_assistant`.
+> **Note**: For development purposes you can run MongoDB in a docker container easily:
+>
+> ```sh
+> docker run --detach --publish 27017:27017 mongo
+> ```
+>
+> With that you need to adjust the `MONGODB` environment variable in the `.env` file to `mongodb://localhost:27017/cla_assistant`.
 
 **Setup GitHub App**
 
@@ -155,10 +165,7 @@ With that you need to adjust the `MONGODB` environment variable in the `.env` fi
 
 ### Supported environment variables
 
-
 The following are the environment variables you have to configure to run a private instance:
-
-#### Required environment variables
 
 | Name                        | Description                                                                                               |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------|
@@ -173,7 +180,7 @@ The following are the environment variables you have to configure to run a priva
 | `MONGODB`                   | The URI for the MongoDB database (e. g. `mongodb://<user>:<password>@<host>:<port>/<dbname>`).            |
 
 
-#### Optional environment variables
+These are optional environment variables:
 
 | Name                        | Description                                                                                                                                                                      | Default                        |
 |-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
@@ -208,22 +215,23 @@ The following are the environment variables you have to configure to run a priva
 
 Run grunt in order to build the application.
 ```sh
-./node_modules/grunt-cli/bin/grunt build
+npx grund build
 ```
 
 During development, just run the grunt default task to build the app, start linter checks and run unit tests on each change of relevant .js files.
 ```sh
-./node_modules/grunt-cli/bin/grunt
+npx grunt
 ```
 
 Finally, source the environment file and start the application.
 
 ```sh
 source .env
-npm start
+npm run start
 ```
 
 ### Quick start with Docker Compose
+
 To get a CLA assistant instance quickly up you can as well use Docker compose:
 
 ```sh
@@ -234,6 +242,7 @@ cp .env.example .env
 # Update GITHUB_CLIENT, GITHUB_SECRET and GITHUB_TOKEN with your values in .env
 docker-compose up
 ```
+
 Now you can navigate to `http://localhost:5000` and access your installation. To locally test webhooks you needs to expose it via e.g. `ngrok` as outlined above.
 
 ### Run the CLA assistant instance with Docker
@@ -241,11 +250,11 @@ Now you can navigate to `http://localhost:5000` and access your installation. To
 To run the CLA assistant instance with docker:
 
 ```bash
-$ docker build -t cla-assistant .
-$ docker run -d -p5000:5000 \
-      -e HOST=.. \
-      -e PORT=... \
-      cla-assistant
+docker build -t cla-assistant .
+docker run -d -p 5000:5000 \
+    -e HOST=.. \
+    -e PORT=... \
+    cla-assistant
 ```
 
 For the list of supported environments see [supported environment variables](#supported-environment-variables).
@@ -270,8 +279,6 @@ limitations under the License.
 
 ## Credits
 
-
 <p align="center">
     <img src="https://user-images.githubusercontent.com/43786652/108909769-434e3b00-7625-11eb-9abb-53a5db3a3fa6.png" title="SAP" />
 <p align="center">
-
