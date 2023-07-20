@@ -158,25 +158,51 @@ With that you need to adjust the `MONGODB` environment variable in the `.env` fi
 
 The following are the environment variables you have to configure to run a private instance:
 
-- `HOST`: This should only set the hostname of your CLA assistant instance (without the protocol).
-- `PORT`: The local port to bind to. Defaults to 5000.
-- `HOST_PORT`: You can set the port of your hosted CLA assistant instance here (in case your instance doesn't use standard http ports like 80 or 443).
-- `PROTOCOL`: Valid options are "http" or "https".
-- `GITHUB_CLIENT`: From your registered application in GitHub.
-- `GITHUB_SECRET`: From your registered application in GitHub.
-- `GITHUB_TOKEN`: Use GitHub token of CLA assistant's user for API calls of not authenticated users. It can be generated here https://github.com/settings/tokens/new. The Only scope required is `public_repo`.
-- `GITHUB_APP_NAME`: The name of your registered GitHub App.
-- `GITHUB_APP_PRIVATE_KEY`: The contents of the private key from your registered GitHub App.
-- `GITHUB_APP_ID`: The ID of your registered GitHub App.
-- `GITHUB_APP_CLIENT`: The Client ID of your registered GitHub App.
-- `GITHUB_APP_SECRET`: The Client Secret of your registered GitHub App.
-- `GITHUB_ADMIN_USERS`: (optional, comma-separated) If set, will only allow the specified GitHub users to administer this instance of the app.
-- `MONGODB`: This has to be in form of a mongodb url, e.g. `mongodb://<user>:<password>@<host>:<port>/<dbname>`.
-- `SLACK_URL`: Optional. You can use it in case you would like to get log-notifications posted in your slack chat.
-- `SLACK_TOKEN`: Optional.
-- `REQUEST_TRACE_HEADER_NAME`: Use the value of an HTTP-header to set the name. E.g. the request id set by an ingress controller via `X-Req-Id`. If not set or no HTTP-header is present a random uuid is used.
-- `LOG_TRACE_FIELD_NAME`: The log field to log the request id to. Defaults to `req_id`.
-- `LOG_TRACE_PREFIX`: A prefix put before the traceId.
+#### Required environment variables
+
+| Name                        | Description                                                                                               |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------|
+| `GITHUB_CLIENT`             | The client ID for authenticating with the GitHub API.                                                     |
+| `GITHUB_SECRET`             | The secret key for authenticating with the GitHub API.                                                    |
+| `GITHUB_TOKEN`              | The access token for making authenticated requests to the GitHub API.                                     |
+| `GITHUB_APP_NAME`           | The name of the registered GitHub App.                                                                    |
+| `GITHUB_APP_PRIVATE_KEY`    | The contents of the private key for the registered GitHub App.                                            |
+| `GITHUB_APP_ID`             | The ID of the registered GitHub App.                                                                      |
+| `GITHUB_APP_CLIENT`         | The client ID of the registered GitHub App.                                                               |
+| `GITHUB_APP_SECRET`         | The client secret of the registered GitHub App.                                                           |
+| `MONGODB`                   | The URI for the MongoDB database (e. g. `mongodb://<user>:<password>@<host>:<port>/<dbname>`).            |
+
+
+#### Optional environment variables
+
+| Name                        | Description                                                                                                                                                                      | Default                        |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
+| `GITHUB_PROTOCOL`           | The protocol to use for GitHub API requests.                                                                                                                                     | https                          |
+| `GITHUB_HOST`               | The hostname of the GitHub server.                                                                                                                                               | github.com                     |
+| `GITHUB_API_HOST`           | The API hostname of the GitHub server.                                                                                                                                           | api.github.com                 |
+| `GITHUB_VERSION`            | The version of the GitHub API to use.                                                                                                                                            | 3.0.0                          |
+| `GITHUB_GRAPHQL`            | The URL for accessing the GitHub GraphQL API.                                                                                                                                    | https://api.github.com/graphql |
+| `GITHUB_ADMIN_USERS`        | (comma-separated) If set, will only allow the specified GitHub users to administer this instance of the app.                                                                     |                                |
+| `GITHUB_DELAY`              | The delay in milliseconds to enforce on webhooks.                                                                                                                                | 5000                           |
+| `TIME_TO_WAIT`              | The time to wait between API calls to avoid rate limits (in milliseconds).                                                                                                       | 1000                           |
+| `PORT`                      | The local port to bind to.                                                                                                                                                       | 5000                           |
+| `PROTOCOL`                  | The protocol to use for the CLA assistant (`http` or `https`).                                                                                                                   | http                           |
+| `HOST`                      | The hostname of the CLA assistant (without the protocol).                                                                                                                        | cla-assistant.io               |
+| `HOST_PORT`                 | The port for the CLA assistant if it doesn't use standard HTTP ports.                                                                                                            |                                |
+| `SESSION_SECRET`            | The secret key for session encryption.                                                                                                                                           | cla-assistant                  |
+| `SMTP_HOST`                 | The hostname of the SMTP server.                                                                                                                                                 |                                |
+| `SMTP_SSL`                  | Whether to use SSL/TLS for SMTP connections.                                                                                                                                     | false                          |
+| `SMTP_PORT`                 | The port number for the SMTP server.                                                                                                                                             | 465                            |
+| `SMTP_USER`                 | The username for SMTP authentication.                                                                                                                                            |                                |
+| `SMTP_PASS`                 | The password for SMTP authentication.                                                                                                                                            |                                |
+| `SLACK_URL`                 | The URL for sending log notifications to Slack.                                                                                                                                  |                                |
+| `SLACK_CHANNEL`             | The name of the Slack channel to send log notifications to.                                                                                                                      |                                |
+| `LOGIN_PAGE_TEMPLATE`       | The path to the login page HTML template.                                                                                                                                        |                                |
+| `REQUIRED_SIGNEES`          |                                                                                                                                                                                  |                                |
+| `ORG_OVERRIDE_ENABLED`      |                                                                                                                                                                                  |                                |
+| `REQUEST_TRACE_HEADER_NAME` | Use the value of an HTTP-header to set the name. E.g. the request id set by an ingress controller via `X-Req-Id`. If not set or no HTTP-header is present a random uuid is used. |                                |
+| `LOG_TRACE_FIELD_NAME`      | The log field name where the request trace ID is stored.                                                                                                                         | req_id                         |
+| `LOG_TRACE_PREFIX`          | A prefix added to the request trace ID.                                                                                                                                          |                                |
 
 > **Hint:** For further reading on setting up MongoDB, check the "[Getting Started](https://docs.mongodb.org/manual/tutorial/getting-started/)" and [`db.createUser()` method](https://docs.mongodb.org/manual/reference/method/db.createUser).
 
