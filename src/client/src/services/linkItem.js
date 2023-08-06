@@ -46,6 +46,16 @@ module.factory('linkItemService', ['$RPCService',
                 var newItem = createNewItem(item, type);
 
                 return $RPCService.call(type, 'update', newItem);
+            },
+
+            migrate: function (item) {
+                if (!item.repo || !item.owner) {
+                    throw 'migation type not supported yet'
+                }
+                return $RPCService.call('repo', 'migrate', {
+                    repo: item.repo,
+                    owner: item.owner,
+                })
             }
         };
     }

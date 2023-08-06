@@ -296,6 +296,29 @@ module.controller('SettingsCtrl', ['$rootScope', '$scope', '$stateParams', '$RPC
             });
         };
 
+        $scope.showMigration = function(linkedItem) {
+            var modal = $modal.open({
+                templateUrl: '/assets/templates/modals/migrateRepository.html',
+                controller: 'MigrateRepositoryCtrl',
+                windowClass: 'migrate-repository',
+                resolve: {
+                    item: function () {
+                        return linkedItem;
+                    },
+                }
+            });
+            modal.result.then(function (updatedItem) {
+                updatedItem.fork = $scope.item.fork;
+                updatedItem.avatarUrl = $scope.item.avatarUrl;
+                $scope.item = updatedItem;
+                $scope.linkedItem = updatedItem;
+                $scope.validateLinkedItem();
+            }, function () {
+                // do nothing on cancel
+            });
+        };
+
+
         $scope.editLinkedItem = function (linkedItem, gist, gists) {
             $scope.popoverIsOpen = false;
             var modal = $modal.open({

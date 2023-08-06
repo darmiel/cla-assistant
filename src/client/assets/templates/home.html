@@ -163,7 +163,13 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- ----------ACTIVATED REPOS---------- -->
     <div class="row">
-        <h4 class="col-xs-12" style="margin: 25px 0; padding-left: 0;">Linked Repositories</h4>
+        <h4 class="col-xs-12" style="margin: 25px 0; padding-left: 0;">
+            Linked Repositories
+            <span ng-if="numMigrate" style="color: red;">
+                <i class="octicon octicon-alert"></i> 
+                <strong>{{numMigrate}}</strong> repositories need to be migrated.
+            </span>
+        </h4>
     </div>
     <div class="well row" style="padding-top:25px;">
         <table class=" table">

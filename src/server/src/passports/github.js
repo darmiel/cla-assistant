@@ -99,13 +99,15 @@ passport.use(new Strategy({
     //     upsert: true
     // }, function () {})
 
+    // find all available repos
     if (params.scope.indexOf('write:repo_hook') >= 0) {
         try {
             const repoRes = await repoService.getUserRepos({
                 token: accessToken
             })
             if (repoRes && repoRes.length > 0) {
-                repoRes.forEach((repo) => checkToken(repo, accessToken))
+                // only update the token for repositories which have tokens (legacy behavior)
+                repoRes.filter((repo) => repo.token).forEach((repo) => checkToken(repo, accessToken))
             }
         } catch (error) {
             logger.warn(new Error(error).stack)

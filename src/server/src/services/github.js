@@ -134,7 +134,9 @@ const githubService = {
         return { data: response }
     },
 
-    callWithGitHubApp: async (request) => {
+    getInstallationAccessToken: getInstallationAccessToken,
+
+    callWithGitHubApp: async (request, throwError = false) => {
         try {
             const username = request.owner
             delete request.owner
@@ -142,6 +144,9 @@ const githubService = {
             request.token = token
             logger.info(request)
         } catch (error) {
+            if (throwError) {
+                throw error
+            }
             logger.error(error);
         }
         return githubService.call(request);

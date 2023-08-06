@@ -47,6 +47,7 @@ module.controller('HomeCtrl', ['$rootScope', '$scope', '$RPCService', '$RAW', '$
         $scope.user = {};
         $scope.isLoading = false;
         $scope.showActivity = $location.host().indexOf('cla-assistant.io') > -1;
+        $scope.numMigrate = 0;
 
         $scope.logAdminIn = function () {
             $window.location.href = '/auth/github';
@@ -96,6 +97,12 @@ module.controller('HomeCtrl', ['$rootScope', '$scope', '$RPCService', '$RAW', '$
             return claRepo;
         };
 
+        var updateNumMigrate = function() {
+            $scope.numMigrate = $scope.claRepos.filter(function(r) {
+                return r.migrate
+            }).length;
+        }
+
         var getLinkedRepos = function () {
             var repoSet = [];
             $scope.repos.forEach(function (repo) {
@@ -111,6 +118,7 @@ module.controller('HomeCtrl', ['$rootScope', '$scope', '$RPCService', '$RAW', '$
                     return;
                 }
                 $scope.claRepos = data.value;
+                updateNumMigrate()
                 // eslint-disable-next-line no-unused-vars
                 $scope.claRepos.forEach(function (claRepo) {
                     claRepo = mixRepoData(claRepo);
