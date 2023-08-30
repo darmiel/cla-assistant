@@ -85,6 +85,7 @@ module.exports = {
     // 	})
     // },
     getAll: (req) => repo.getAll(req.args),
+    getAllAppAccess: (req) => repo.getAllAccessibleByApp(req.user.login, req.user.token),
     update: (req) => {
         req.args.token = req.args.token || req.user.token
         utils.validateArgs(req.args, REPOCREATESCHEMA)

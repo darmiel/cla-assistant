@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+.idea/
+.vscode/
 .DS_Store
 node_modules
 src/bower

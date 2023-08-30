@@ -51,6 +51,7 @@ class ClaApi {
             })
         }
 
+        // TODO: Check Token Usage here
         const service = req.args.orgId ? orgService : repoService
         const item = await service.get(req.args)
         if (!item) {
@@ -62,6 +63,7 @@ class ClaApi {
             gist_url: item.gist
         }
         gistArgs = req.args.gist ? req.args.gist : gistArgs
+
         token = item.token
         const owner = req.user ? req.user.login : req.args.owner
         return cla.getGist({
@@ -461,7 +463,7 @@ async function markdownRender(content, token, owner) {
         token,
         owner
     }
-    const response = await github.callWithGitHubApp(args)
+    const response = await github.callWithGitHubApp(args, false, false)
     return {
         raw: response.body || response.data || response
     }
@@ -516,6 +518,12 @@ async function validatePR(args, item) {
             item = await cla.getLinkedItem(args)
         }
         args.token = item.token
+        /*
+        // TODO: check token usage
+        if (item.token) {
+            args.token = item.token
+        }
+        */
         if (!item.gist) {
             return claNotRequired(args, 'updateForNullCla')
         }

@@ -3,17 +3,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 module.controller(
-  'MigrateRepositoryCtrl',
-  function ($scope, $modalInstance, $RPCService, $window, $modal, linkItemService, item, $log) {
+  'MigrateOrganizationCtrl',
+  function ($scope, $modalInstance, $RPCService, $window, $modal, $log, linkItemService, item) {
     $scope.item = item;
-
+    $scope.errorMsg = '';
+    
     // these are used to automatically fill out the organization
     // when installing the GitHub App
     $scope.inviteAppName = ''
     $scope.inviteOrganizationID = ''
-    $scope.inviteUserID = ''
 
-    $scope.updateInviteMeta = function() {
+    $scope.updateOrganizationID = function() {
       $RPCService.call('github', 'getInstallationMeta', {
         org: item.org,
       }, function(err, res) {
@@ -21,15 +21,13 @@ module.controller(
         if (err) {
           return;
         }
-        $scope.inviteUserID = res.value.suggestedUserID;
-        $scope.$broadcast('inviteUserID');
+        $scope.inviteOrganizationID = res.value.suggestedUserID;
+        $scope.$broadcast('inviteOrganizationID');
 
         $scope.inviteAppName = res.value.appName;
         $scope.$broadcast('inviteAppName');
       })
     };
-
-    $scope.errorMsg = '';
 
     // indicates if we are already checking
     $scope.checking = false;
@@ -86,7 +84,7 @@ module.controller(
       $modalInstance.dismiss('cancel');
     };
 
-    $scope.updateInviteMeta();
+    $scope.updateOrganizationID();
     $scope.migrate();
   }
 );

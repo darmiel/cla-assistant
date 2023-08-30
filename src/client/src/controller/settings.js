@@ -300,7 +300,7 @@ module.controller('SettingsCtrl', ['$rootScope', '$scope', '$stateParams', '$RPC
             var modal = $modal.open({
                 templateUrl: '/assets/templates/modals/migrateRepository.html',
                 controller: 'MigrateRepositoryCtrl',
-                windowClass: 'migrate-repository',
+                windowClass: 'edit-linked-item',
                 resolve: {
                     item: function () {
                         return linkedItem;
@@ -318,6 +318,27 @@ module.controller('SettingsCtrl', ['$rootScope', '$scope', '$stateParams', '$RPC
             });
         };
 
+        $scope.showOrganizationMigration = function(linkedItem) {
+            var modal = $modal.open({
+                templateUrl: '/assets/templates/modals/migrateOrganization.html',
+                controller: 'MigrateOrganizationCtrl',
+                windowClass: 'edit-linked-item',
+                resolve: {
+                    item: function () {
+                        return linkedItem;
+                    },
+                }
+            });
+            modal.result.then(function (updatedItem) {
+                updatedItem.fork = $scope.item.fork;
+                updatedItem.avatarUrl = $scope.item.avatarUrl;
+                $scope.item = updatedItem;
+                $scope.linkedItem = updatedItem;
+                $scope.validateLinkedItem();
+            }, function () {
+                // do nothing on cancel
+            });
+        };
 
         $scope.editLinkedItem = function (linkedItem, gist, gists) {
             $scope.popoverIsOpen = false;

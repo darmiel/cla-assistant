@@ -9,7 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 
     <div class="modal-header">
         <span class="small-light-text">MIGRATION</span><br>
-        <span class="big-bold-text">{{item.owner}}/{{item.repo}}</span>
+        <span class="big-bold-text">{{item.org}}</span>
         <div ng-show="success">
             <span class="small-green-text">Migration Successful</span>
         </div>
@@ -33,11 +33,11 @@ SPDX-License-Identifier: Apache-2.0
         <div ng-show="needGitHubApp">
             <h2>Install the GitHub App</h2>
             <p>
-                Install the GitHub App to every repository you plan to use CLA-Assistant on.
+                Install the GitHub App to every repository in your organization you plan to use CLA-Assistant on.
                 The GitHub App will act on your behalf with more restricted permissions.
             </p>
             <a ng-show="inviteUserID" class="btn btn-success"
-                href="https://github.com/apps/{{inviteAppName}}/installations/new/permissions?suggested_target_id={{inviteUserID}}&repository_ids[]={{item.repoId}}">
+                href="https://github.com/apps/{{inviteAppName}}/installations/new/permissions?suggested_target_id={{inviteOrganizationID}}">
                 Install GitHub App
             </a>
             <br><br>

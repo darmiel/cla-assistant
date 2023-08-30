@@ -87,6 +87,27 @@ async function getInstallationId(octokit, arg) {
     return result.data.id;
 }
 
+async function getInstallationIdByUsername(username) {
+    const JWToctokit = new OctokitWithPluginsAndDefaults({
+        authStrategy: createAppAuth,
+        auth: config.server.github.app
+    })
+    const result = await callGithub(JWToctokit, 'apps', 'getUserInstallation', { username })
+    return result.data.id
+}
+
+async function getInstallationForRepo(owner, repo) {
+    const JWToctokit = new OctokitWithPluginsAndDefaults({
+        authStrategy: createAppAuth,
+        auth: config.server.github.app
+    })
+    const result = await callGithub(JWToctokit, 'apps', 'getRepoInstallation', {
+        owner,
+        repo
+     })
+    return result
+}
+
 async function getInstallationAccessToken(username) {
     const JWToctokit = new OctokitWithPluginsAndDefaults({
         authStrategy: createAppAuth,
@@ -134,15 +155,17 @@ const githubService = {
         return { data: response }
     },
 
-    getInstallationAccessToken: getInstallationAccessToken,
+    getInstallationAccessToken,
+    getInstallationIdByUsername,
+    getInstallationForRepo,
 
-    callWithGitHubApp: async (request, throwError = false) => {
+    callWithGitHubApp: async (request, throwError = false, printLog = true) => {
         try {
             const username = request.owner
             delete request.owner
             const token = await getInstallationAccessToken(username)
             request.token = token
-            logger.info(request)
+            if (printLog) logger.info(request)
         } catch (error) {
             if (throwError) {
                 throw error

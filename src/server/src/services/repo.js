@@ -100,6 +100,19 @@ class RepoService {
         })
     }
 
+    async getAllAccessibleByApp(owner, userToken) {
+        const appInstallationID = await github.getInstallationIdByUsername(owner)
+        return await github.call({
+            obj: 'apps',
+            fun: 'listInstallationReposForAuthenticatedUser',
+            arg: {
+                installation_id: appInstallationID,
+                per_page: 100
+            },
+            token: userToken
+        })
+    }
+
     async getAll(args) {
         const repoIds = []
         args.set.forEach((repo) => repoIds.push({
@@ -113,9 +126,9 @@ class RepoService {
             const promises = []
             for (let i = 0; i < limit; i++) {
                 promises.push(Repo.find({
-                        $or: idChunk[startIndex]
-                    }))
-                    ++startIndex
+                    $or: idChunk[startIndex]
+                }))
+                ++startIndex
             }
             return promises
         }
@@ -172,6 +185,13 @@ class RepoService {
         }
         logger.debug('generated app token:', appToken)
 
+        try {
+            // this request will fail with status 404 if the app has no access to the repo
+            await github.getInstallationForRepo(args.owner, args.repo)
+        } catch(error) {
+            return _resp('GitHub App not installed')
+        }
+
         // check if the app has permission to list pull requests
         try {
             await github.call({
@@ -182,7 +202,7 @@ class RepoService {
                     owner: args.owner,
                     repo: args.repo,
                     state: 'open',
-                    per_page: 100
+                    per_page: 1
                 },
             }, true)
         } catch (error) {
@@ -194,7 +214,8 @@ class RepoService {
         logger.info('Removing token from repository object')
         repo.token = undefined
         try {
-            await repo.save()
+            // TODO: uncomment this when we are ready to remove the token from the database=
+            // await repo.save()
         } catch(error) {
             return _resp('Cannot save repository')
         }
@@ -319,6 +340,7 @@ class RepoService {
             }
         }
 
+        // TODO: CHECK THIS
         let collectTokenAndCallGithub = (args, item) => {
             args.token = item.token
             let params = {
