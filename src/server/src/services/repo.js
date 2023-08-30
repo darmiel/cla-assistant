@@ -138,7 +138,6 @@ class RepoService {
             const repos = await Promise.all(parallelLimit(Math.min(idChunk.length - startIndex, 3)))
             for (const set of repos) {
                 allRepos = allRepos.concat(set.map(r => {
-                    // TODO: please fix this. please.
                     const temp = JSON.parse(JSON.stringify(r))
                     temp.migrate = !!temp.token
                     return temp
@@ -340,7 +339,6 @@ class RepoService {
             }
         }
 
-        // TODO: CHECK THIS
         let collectTokenAndCallGithub = (args, item) => {
             args.token = item.token
             let params = {

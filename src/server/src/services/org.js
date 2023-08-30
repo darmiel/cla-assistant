@@ -26,7 +26,6 @@ class OrgService {
             orgId: args.orgId,
             org: args.org,
             gist: args.gist,
-            token: args.token, // TODO: remove this if testing complete.
             excludePattern: args.excludePattern,
             sharedGist: !!args.sharedGist,
             minFileChanges: args.minFileChanges,
@@ -103,8 +102,7 @@ class OrgService {
         logger.info('Removing token from organization object')
         org.token = undefined
         try {
-            // TODO: uncomment this to actually migrate the organization
-            // await org.save()
+            await org.save()
         } catch(error) {
             return _resp('Cannot save organization')
         }

@@ -51,7 +51,6 @@ class ClaApi {
             })
         }
 
-        // TODO: Check Token Usage here
         const service = req.args.orgId ? orgService : repoService
         const item = await service.get(req.args)
         if (!item) {
@@ -518,12 +517,6 @@ async function validatePR(args, item) {
             item = await cla.getLinkedItem(args)
         }
         args.token = item.token
-        /*
-        // TODO: check token usage
-        if (item.token) {
-            args.token = item.token
-        }
-        */
         if (!item.gist) {
             return claNotRequired(args, 'updateForNullCla')
         }
