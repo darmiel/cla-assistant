@@ -8,6 +8,7 @@ const logger = require('../services/logger')
 const Joi = require('joi')
 const webhook = require('./webhook')
 const utils = require('../middleware/utils')
+const github = require('../services/github')
 
 const REPOCREATESCHEMA = Joi.object().keys({
     owner: Joi.string().required(),
@@ -55,6 +56,15 @@ module.exports = {
 
         // repo not yet in database: create
         if (!dbRepo) {
+            // check if repo exists and if the GitHub App is installed
+            try {
+                // one of the following calls will throw an error if the GitHub App is not installed
+                await github.getInstallationAccessToken(req.args.owner)
+                await github.getInstallationForRepo(req.args.owner, req.args.repo)
+            } catch(error) {
+                throw 'GitHub App not installed'
+            }
+
             const createdRepo = await repo.create(req.args)
             if (createdRepo.gist) {
                 try {

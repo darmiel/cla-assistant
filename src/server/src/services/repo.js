@@ -213,8 +213,7 @@ class RepoService {
         logger.info('Removing token from repository object')
         repo.token = undefined
         try {
-            // TODO: uncomment this when we are ready to remove the token from the database=
-            // await repo.save()
+            await repo.save()
         } catch(error) {
             return _resp('Cannot save repository')
         }

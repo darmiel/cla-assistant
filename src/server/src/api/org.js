@@ -50,6 +50,23 @@ class OrgAPI {
         if (dbOrg) {
             throw new Error('This org is already linked.')
         }
+
+        // check if GitHub App is installed to the org
+        try {
+            const appToken = await github.getInstallationAccessToken(req.user.login)
+            await github.call({
+                token: appToken,
+                obj: 'repos',
+                fun: 'listForOrg',
+                arg: {
+                    org: org.org,
+                    per_page: 1
+                },
+            }, true)
+        } catch(error) {
+            return 'GitHub App not installed or insufficient permissions'
+        }
+
         dbOrg = await org.create(req.args)
 
         try {
