@@ -101,16 +101,30 @@ class RepoService {
     }
 
     async getAllAccessibleByApp(owner, userToken) {
-        const appInstallationID = await github.getInstallationIdByUsername(owner)
-        return await github.call({
+        // list all installations accessible to the authenticated user
+        const installations = await github.call({
             obj: 'apps',
-            fun: 'listInstallationReposForAuthenticatedUser',
-            arg: {
-                installation_id: appInstallationID,
-                per_page: 100
+            fun: 'listInstallationsForAuthenticatedUser',
+            args: {
+                per_page: 100,
             },
             token: userToken
         })
+        const result = {data: []}
+        for (const installation of installations.data) {
+            logger.info('requesting user repos for installation:', installation.id)
+            const repos = await github.call({
+                obj: 'apps',
+                fun: 'listInstallationReposForAuthenticatedUser',
+                arg: {
+                    installation_id: installation.id,
+                    per_page: 100
+                },
+                token: userToken
+            })
+            result.data.push(...repos.data)
+        }
+        return result
     }
 
     async getAll(args) {
