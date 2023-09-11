@@ -57,7 +57,7 @@ class OrgService {
         return org.save()
     }
 
-    async migrate(args, username) {
+    async migrate(args) {
         const { org: orgArg, orgId: orgIdArg } = args
 
         // find organization in database
@@ -76,27 +76,11 @@ class OrgService {
         // try to get GitHub Apps token
         let appToken
         try {
-            appToken = await github.getInstallationAccessToken(username)
+            appToken = await github.getInstallationAccessTokenForOrg(orgArg)
         } catch(error) {
             return _resp('GitHub App not installed')
         }
         logger.debug('generated app token:', appToken)
-
-        // check if the app has permission to list repositories in the organization
-        try {
-            await github.call({
-                token: appToken,
-                obj: 'repos',
-                fun: 'listForOrg',
-                arg: {
-                    org: org.org,
-                    per_page: 1
-                },
-            }, true)
-        } catch (error) {
-            logger.error(error)
-            return _resp('GitHub App has insufficient permissions')
-        }
 
         // remove token from database
         logger.info('Removing token from organization object')

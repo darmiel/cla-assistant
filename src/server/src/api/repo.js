@@ -58,9 +58,8 @@ module.exports = {
         if (!dbRepo) {
             // check if repo exists and if the GitHub App is installed
             try {
-                // one of the following calls will throw an error if the GitHub App is not installed
-                await github.getInstallationAccessToken(req.args.owner)
-                await github.getInstallationForRepo(req.args.owner, req.args.repo)
+                // this will throw an error if the app is not installed
+                await github.getInstallationAccessTokenForRepo(req.args.owner, req.args.repo)
             } catch(error) {
                 throw 'GitHub App not installed'
             }

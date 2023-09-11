@@ -112,7 +112,6 @@ class RepoService {
         })
         const result = {data: []}
         for (const installation of installations.data) {
-            logger.info('requesting user repos for installation:', installation.id)
             const repos = await github.call({
                 obj: 'apps',
                 fun: 'listInstallationReposForAuthenticatedUser',
@@ -192,18 +191,11 @@ class RepoService {
         // try to get GitHub Apps token
         let appToken
         try {
-            appToken = await github.getInstallationAccessToken(args.owner)
+            appToken = await github.getInstallationAccessTokenForRepo(args.owner, args.repo)
         } catch(error) {
             return _resp('GitHub App not installed')
         }
         logger.debug('generated app token:', appToken)
-
-        try {
-            // this request will fail with status 404 if the app has no access to the repo
-            await github.getInstallationForRepo(args.owner, args.repo)
-        } catch(error) {
-            return _resp('GitHub App not installed')
-        }
 
         // check if the app has permission to list pull requests
         try {

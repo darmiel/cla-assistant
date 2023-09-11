@@ -53,16 +53,8 @@ class OrgAPI {
 
         // check if GitHub App is installed to the org
         try {
-            const appToken = await github.getInstallationAccessToken(req.user.login)
-            await github.call({
-                token: appToken,
-                obj: 'repos',
-                fun: 'listForOrg',
-                arg: {
-                    org: org.org,
-                    per_page: 1
-                },
-            }, true)
+            // this will throw an error if the app is not installed
+            await github.getInstallationAccessTokenForOrg(req.args.org)
         } catch(error) {
             return 'GitHub App not installed or insufficient permissions'
         }

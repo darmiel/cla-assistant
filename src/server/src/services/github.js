@@ -81,19 +81,13 @@ function determineAuthentication(token, basicAuth) {
     return {}
 }
 
-async function getInstallationId(octokit, arg) {
-    // Test: using the user installtion for both user and organization installation
-    const result = await callGithub(octokit, 'apps', 'getUserInstallation', arg);
-    return result.data.id;
-}
-
-async function getInstallationIdByUsername(username) {
+async function getInstallationForUser(username) {
     const JWToctokit = new OctokitWithPluginsAndDefaults({
         authStrategy: createAppAuth,
         auth: config.server.github.app
     })
     const result = await callGithub(JWToctokit, 'apps', 'getUserInstallation', { username })
-    return result.data.id
+    return result
 }
 
 async function getInstallationForRepo(owner, repo) {
@@ -108,14 +102,39 @@ async function getInstallationForRepo(owner, repo) {
     return result
 }
 
-async function getInstallationAccessToken(username) {
+async function getInstallationForOrg(org) {
     const JWToctokit = new OctokitWithPluginsAndDefaults({
         authStrategy: createAppAuth,
         auth: config.server.github.app
-    });
-    const installation_id = await getInstallationId(JWToctokit, { username });
-    const result = await callGithub(JWToctokit, 'apps', 'createInstallationAccessToken', { installation_id });
-    return result.data.token;
+    })
+    const result = await callGithub(JWToctokit, 'apps', 'getOrgInstallation', {
+        org,
+    })
+    return result
+}
+
+async function getInstallationAccessTokenByInstallationID(installation_id) {
+    const JWToctokit = new OctokitWithPluginsAndDefaults({
+        authStrategy: createAppAuth,
+        auth: config.server.github.app
+    })
+    const result = await callGithub(JWToctokit, 'apps', 'createInstallationAccessToken', { installation_id })
+    return result.data.token
+}
+
+async function getInstallationAccessTokenForUser(username) {
+    const installation = await getInstallationForUser(username)
+    return await getInstallationAccessTokenByInstallationID(installation.data.id)
+}
+
+async function getInstallationAccessTokenForRepo(owner, repo) {
+    const installation = await getInstallationForRepo(owner, repo)
+    return await getInstallationAccessTokenByInstallationID(installation.data.id)
+}
+
+async function getInstallationAccessTokenForOrg(org) {
+    const installation = await getInstallationForOrg(org)
+    return await getInstallationAccessTokenByInstallationID(installation.data.id)
 }
 
 const githubService = {
@@ -155,15 +174,19 @@ const githubService = {
         return { data: response }
     },
 
-    getInstallationAccessToken,
-    getInstallationIdByUsername,
+    getInstallationAccessTokenForUser,
+    getInstallationAccessTokenByInstallationID,
+    getInstallationAccessTokenForOrg,
+    getInstallationAccessTokenForRepo,
+    getInstallationForUser,
     getInstallationForRepo,
+    getInstallationForOrg,
 
     callWithGitHubApp: async (request, throwError = false, printLog = true) => {
         try {
             const username = request.owner
             delete request.owner
-            const token = await getInstallationAccessToken(username)
+            const token = await getInstallationAccessTokenForUser(username)
             request.token = token
             if (printLog) logger.info(request)
         } catch (error) {
@@ -179,7 +202,7 @@ const githubService = {
         try {
             const username = query.owner
             delete query.owner
-            const ghsToken = await getInstallationAccessToken(username)
+            const ghsToken = await getInstallationAccessTokenForUser(username)
             token = ghsToken
             logger.info(query)
         } catch (error) {
