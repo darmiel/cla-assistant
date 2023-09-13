@@ -15,7 +15,7 @@ module.controller(
 
     $scope.updateInviteMeta = function() {
       $RPCService.call('github', 'getInstallationMeta', {
-        org: item.org,
+        owner: item.owner,
       }, function(err, res) {
         $log.info('getInstallationMeta', err, res)
         if (err) {

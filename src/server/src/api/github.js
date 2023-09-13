@@ -5,6 +5,7 @@
 // module
 const github = require('../services/github')
 const merge = require('merge')
+const logger = require('../services/logger')
 
 module.exports = {
     call: async (req) => {
@@ -14,7 +15,19 @@ module.exports = {
     },
     getInstallationMeta: async(req) => {
         let suggestedUserID = req.user.id
-        if (req.args.org) {
+        if (req.args.owner) {
+            logger.debug(`Installation Meta: Getting user ID for Owner ${req.args.owner}`)
+            const res = await github.call({
+                obj: 'users',
+                fun: 'getByUsername',
+                arg: {
+                    username: req.args.owner
+                },
+                token: req.user.token
+            })
+            suggestedUserID = res.data.id
+        } else if (req.args.org) {
+            logger.debug(`Installation Meta: Getting org ID for Org ${req.args.org}`)
             const res = await github.call({
                 obj: 'orgs',
                 fun: 'get',
